@@ -22,6 +22,7 @@ class LearningSetFactory(object):
         activity_reccognition = 2
 
     def get_train_test_data(self, data_source):
+        print("Data source: {}" .format(data_source))
         if data_source == LearningSetFactory.DataSource.breast_cancer:
             data, target = self.get_breast_cancer()
         elif data_source == LearningSetFactory.DataSource.activity_reccognition:
@@ -86,6 +87,7 @@ class LearningSetFactory(object):
                     data.append(raw_data)
                     labels.append(label)
                     counter += 1
+
             sequence_lengths.append(counter)
 
         return np.asarray(data, np.float64), np.asarray(labels), sequence_lengths
