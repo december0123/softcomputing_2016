@@ -2,8 +2,10 @@ from src.datasets import LearningSetFactory
 from seqlearn.hmm import MultinomialHMM
 from sklearn.metrics import accuracy_score
 from pomegranate import BayesianNetwork
+from sklearn.feature_extraction import DictVectorizer
+from copy import deepcopy
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 def train_and_test_markov(X_train, y_train, sequence_length_train, X_test, y_test,
                           sequence_length_test, *args, **kwargs):
@@ -17,8 +19,20 @@ def train_and_test_markov(X_train, y_train, sequence_length_train, X_test, y_tes
 
 def train_and_test_bayes(X_train, y_train, sequence_length_train, X_test, y_test,
                           sequence_length_test, feature_names, *args, **kwargs):
-    model = BayesianNetwork.from_samples(X_train, algorithm='chow-liu', state_names=feature_names)
-    plt.figure(figsize=(14, 10))
+    print("Bayes network training")
+    vectorizer = DictVectorizer(sparse=False)
+    labels = [{label: 1.0} for label in y_train]
+    formatted_labels = vectorizer.fit_transform(labels)
+    print("Classes", vectorizer.get_feature_names())
+    print("X train shape", X_train.shape)
+    print("Formatted labels shape", formatted_labels.shape)
+    X = np.concatenate((X_train, formatted_labels), axis=1)
+    print("After merge ", X.shape)
+    state_names = deepcopy(feature_names)
+    state_names.extend(vectorizer.get_feature_names())
+    model = BayesianNetwork.from_samples(X, algorithm='chow-liu', state_names=state_names)
+
+    plt.figure(figsize=(16, 8))
     model.plot()
     plt.show()
     print(model.predict_proba({}))
