@@ -19,14 +19,14 @@ class LearningSetFactory(object):
     @unique
     class DataSource(Enum):
         breast_cancer = 1
-        activity_reccognition = 2
+        activity_recognition = 2
 
     def get_train_test_data(self, data_source):
         print("Data source: {}" .format(data_source))
         if data_source == LearningSetFactory.DataSource.breast_cancer:
             data, target, feature_names = self.get_breast_cancer()
-        elif data_source == LearningSetFactory.DataSource.activity_reccognition:
-            return self.get_activity_reccognition()
+        elif data_source == LearningSetFactory.DataSource.activity_recognition:
+            return self.get_activity_recognition()
         else:
             raise Exception("Invalid data source. Check DataSource enum class.")
 
@@ -53,7 +53,7 @@ class LearningSetFactory(object):
         data = vectorizer.fit_transform(data, target)
         return data, target, vectorizer.get_feature_names()
 
-    def get_activity_reccognition(self):
+    def get_activity_recognition(self):
         url = "https://archive.ics.uci.edu/ml/machine-learning-databases/" \
               "00287/Activity%20Recognition%20from%20Single%20Chest-Mounted%20Accelerometer.zip"
 
@@ -62,10 +62,12 @@ class LearningSetFactory(object):
         if not os.path.exists(target_path):
             urllib.request.urlretrieve(url, target_path)
 
-        with zipfile.ZipFile(target_path, "r") as zip_ref:
-            zip_ref.extractall(os.path.join(DATASET_DIR))
-
         unpack_dir = os.path.join(DATASET_DIR, "Activity Recognition from Single Chest-Mounted Accelerometer")
+
+        if not os.path.exists(unpack_dir):
+            with zipfile.ZipFile(target_path, "r") as zip_ref:
+                zip_ref.extractall(os.path.join(DATASET_DIR))
+
         csv_files = [os.path.join(unpack_dir, file) for file in os.listdir(unpack_dir) if file.endswith(".csv")]
         random.shuffle(csv_files)
 
@@ -73,10 +75,12 @@ class LearningSetFactory(object):
         test = slice(0, split_point)
         train = slice(split_point, len(csv_files))
 
-        return self.get_data_from_csv_without_header(csv_files[test]) + \
-               self.get_data_from_csv_without_header(csv_files[train])
+        feature_names = ['x acceleration', 'y acceleration', 'z acceleration']
 
-    def get_data_from_csv_without_header(self, filenames):
+        return self.get_data_from_csv_without_header(csv_files[test], skip_columns=1) + \
+               self.get_data_from_csv_without_header(csv_files[train], skip_columns=1) + (feature_names,)
+
+    def get_data_from_csv_without_header(self, filenames, skip_columns=0):
         data = []
         labels = []
         sequence_lengths = []
@@ -86,6 +90,7 @@ class LearningSetFactory(object):
                 reader = csv.reader(csvfile)
                 for row in reader:
                     *raw_data, label = row
+                    raw_data = raw_data[skip_columns:]
                     data.append(raw_data)
                     labels.append(label)
                     counter += 1
