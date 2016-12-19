@@ -22,16 +22,13 @@ def train_and_test_bayes(X_train, y_train, sequence_length_train, X_test, y_test
     print("Training {}".format(clf))
     print(len(y_test))
     y_pred = clf.predict(X_test, sequence_length_test)
-    # print("Accuracy: {0:.2f}".format(100 * accuracy_score(y_pred, y_test)))
-
-    # plt.figure(figsize=(16, 8))
-    # clf.model.plot()
-    # plt.show()
+    print("Accuracy: {0:.2f}".format(100 * accuracy_score(y_pred, y_test)))
 
 
 def main():
     learning_factory = LearningSetFactory()
     train_and_test_bayes(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.breast_cancer))
+    # train_and_test_bayes(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.activity_reccognition))
     train_and_test_markov(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.breast_cancer))
     train_and_test_markov(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.activity_reccognition))
 
