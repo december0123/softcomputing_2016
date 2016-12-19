@@ -36,8 +36,8 @@ def train_and_test_bayes(X_train, y_train, sequence_length_train, X_test, y_test
     plt.show()
 
     formatted_test_labels = le.fit_transform(y_test)
-    formatted_test_labels = formatted_test_labels.reshape(formatted_labels.shape[0], 1)
-    Test = np.concatenate((X_train, formatted_labels), axis=1)
+    formatted_test_labels = formatted_test_labels.reshape(formatted_test_labels.shape[0], 1)
+    Test = np.concatenate((X_train, formatted_test_labels), axis=1)
 
 
     print(model.predict_proba({ state_names[0]: 0}))
