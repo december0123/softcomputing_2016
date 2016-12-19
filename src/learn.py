@@ -6,6 +6,7 @@ from sklearn.feature_extraction import DictVectorizer
 from copy import deepcopy
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn import preprocessing
 
 def train_and_test_markov(X_train, y_train, sequence_length_train, X_test, y_test,
                           sequence_length_test, *args, **kwargs):
@@ -20,22 +21,26 @@ def train_and_test_markov(X_train, y_train, sequence_length_train, X_test, y_tes
 def train_and_test_bayes(X_train, y_train, sequence_length_train, X_test, y_test,
                           sequence_length_test, feature_names, *args, **kwargs):
     print("Bayes network training")
-    vectorizer = DictVectorizer(sparse=False)
-    labels = [{label: 1.0} for label in y_train]
-    formatted_labels = vectorizer.fit_transform(labels)
-    print("Classes", vectorizer.get_feature_names())
-    print("X train shape", X_train.shape)
-    print("Formatted labels shape", formatted_labels.shape)
+    le = preprocessing.LabelEncoder()
+    formatted_labels = le.fit_transform(y_train)
+    formatted_labels = formatted_labels.reshape(formatted_labels.shape[0], 1)
+    print("Classes", le.classes_)
     X = np.concatenate((X_train, formatted_labels), axis=1)
     print("After merge ", X.shape)
     state_names = deepcopy(feature_names)
-    state_names.extend(vectorizer.get_feature_names())
+    state_names.extend("Cancer_type")
     model = BayesianNetwork.from_samples(X, algorithm='chow-liu', state_names=state_names)
 
     plt.figure(figsize=(16, 8))
     model.plot()
     plt.show()
-    print(model.predict_proba({}))
+
+    formatted_test_labels = le.fit_transform(y_test)
+    formatted_test_labels = formatted_test_labels.reshape(formatted_labels.shape[0], 1)
+    Test = np.concatenate((X_train, formatted_labels), axis=1)
+
+
+    print(model.predict_proba({ state_names[0]: 0}))
     raise NotImplementedError
 
 
