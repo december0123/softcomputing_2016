@@ -1,12 +1,6 @@
 from src.datasets import LearningSetFactory
 from seqlearn.hmm import MultinomialHMM
 from sklearn.metrics import accuracy_score
-# from pomegranate import BayesianNetwork
-# from sklearn.feature_extraction import DictVectorizer
-# from copy import deepcopy
-# import matplotlib.pyplot as plt
-# import numpy as np
-# from sklearn import preprocessing
 
 from src.MyBayes import MyBayes
 
@@ -38,8 +32,8 @@ def train_and_test_bayes(X_train, y_train, sequence_length_train, X_test, y_test
 def main():
     learning_factory = LearningSetFactory()
     train_and_test_bayes(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.breast_cancer))
-    # train_and_test_markov(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.breast_cancer))
-    # train_and_test_markov(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.activity_reccognition))
+    train_and_test_markov(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.breast_cancer))
+    train_and_test_markov(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.activity_reccognition))
 
 if __name__ == "__main__":
     main()
