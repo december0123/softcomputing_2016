@@ -24,14 +24,14 @@ class LearningSetFactory(object):
     def get_train_test_data(self, data_source):
         print("Data source: {}" .format(data_source))
         if data_source == LearningSetFactory.DataSource.breast_cancer:
-            data, target = self.get_breast_cancer()
+            data, target, feature_names = self.get_breast_cancer()
         elif data_source == LearningSetFactory.DataSource.activity_reccognition:
             return self.get_activity_reccognition()
         else:
             raise Exception("Invalid data source. Check DataSource enum class.")
 
         X_train, X_test, y_train, y_test = train_test_split(data, target, test_size=self.test_size)
-        return X_train, y_train, [len(y_train)], X_test, y_test, [len(y_test)]
+        return X_train, y_train, [len(y_train)], X_test, y_test, [len(y_test)], feature_names
 
     def get_breast_cancer(self):
         data = []
@@ -49,7 +49,9 @@ class LearningSetFactory(object):
                 row.pop('label')
                 data.append(row)
 
-        return DictVectorizer(sparse=False).fit_transform(data, target), target
+        vectorizer = DictVectorizer(sparse=False)
+        data = vectorizer.fit_transform(data, target)
+        return data, target, vectorizer.get_feature_names()
 
     def get_activity_reccognition(self):
         url = "https://archive.ics.uci.edu/ml/machine-learning-databases/" \
