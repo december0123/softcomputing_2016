@@ -21,8 +21,7 @@ def train_and_test_bayes(X_train, y_train, sequence_length_train, X_test, y_test
     plt.figure(figsize=(14, 10))
     model.plot()
     plt.show()
-
-    print(feature_names)
+    print(model.predict_proba({}))
     raise NotImplementedError
 
 
