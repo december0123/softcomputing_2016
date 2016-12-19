@@ -22,7 +22,7 @@ def train_and_test_bayes(X_train, y_train, sequence_length_train, X_test, y_test
     print("Training {}".format(clf))
     print(len(y_test))
     y_pred = clf.predict(X_test, sequence_length_test)
-    # print("Accuracy: {0:.2f}".format(100 * accuracy_score(y_pred, y_test)))
+    print("Accuracy: {0:.2f}".format(100 * accuracy_score(y_pred, y_test)))
 
     # plt.figure(figsize=(16, 8))
     # clf.model.plot()
