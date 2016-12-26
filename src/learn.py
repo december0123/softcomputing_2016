@@ -28,9 +28,9 @@ def train_and_test_bayes(X_train, y_train, sequence_length_train, X_test, y_test
 def main():
     learning_factory = LearningSetFactory()
     train_and_test_bayes(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.breast_cancer))
-    train_and_test_bayes(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.activity_recognition))
+    # train_and_test_bayes(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.activity_recognition))
     train_and_test_markov(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.breast_cancer))
-    train_and_test_markov(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.activity_recognition))
+    # train_and_test_markov(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.activity_recognition))
 
 if __name__ == "__main__":
     main()
