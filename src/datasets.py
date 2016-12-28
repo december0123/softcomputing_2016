@@ -23,6 +23,7 @@ class LearningSetFactory(object):
         breast_cancer = 1
         activity_recognition = 2
         sequenced_breast_cancer = 3
+        sequenced_activity_recognition = 4
 
     def get_train_test_data(self, data_source):
         print("Data source: {}" .format(data_source))
@@ -32,26 +33,41 @@ class LearningSetFactory(object):
             return self.get_activity_recognition()
         elif data_source == LearningSetFactory.DataSource.sequenced_breast_cancer:
             return self.get_sequenced_breast_cancer()
+        elif data_source == LearningSetFactory.DataSource.sequenced_activity_recognition:
+            return self.get_sequenced_activity_recognition()
         else:
             raise Exception("Invalid data source. Check DataSource enum class.")
 
         X_train, X_test, y_train, y_test = train_test_split(data, target, test_size=self.test_size)
         return X_train, y_train, [len(y_train)], X_test, y_test, [len(y_test)], feature_names
 
-    def get_sequenced_breast_cancer(self):
-        # proof of concept
-        grouped_by_labels, labels, features = self.extract_breast_cancer_data_grouped_by_label()
+    def create_split_sequenced_data(self, features, grouped_by_labels, labels):
         sequenced_X, sequenced_Y = self.create_sequences(grouped_by_labels, labels)
         sequenced_X, sequenced_Y = self.shuffle_sequences(sequenced_X, sequenced_Y)
-
-        vectorizer = DictVectorizer(sparse=False)
-        sequenced_X = vectorizer.fit_transform(sequenced_X)
-
+        if isinstance(sequenced_X[0], dict):
+            vectorizer = DictVectorizer(sparse=False)
+            sequenced_X = vectorizer.fit_transform(sequenced_X)
         X_test, X_train, y_test, y_train = self.split_sets(sequenced_X, sequenced_Y)
         train_seq_lengths = self.get_sequence_lengths(y_train)
         test_seq_lengths = self.get_sequence_lengths(y_test)
-
         return X_train, y_train, train_seq_lengths, X_test, y_test, test_seq_lengths, features
+
+    def get_sequenced_breast_cancer(self):
+        # proof of concept
+        grouped_by_labels, labels, features = self.extract_breast_cancer_data_grouped_by_label()
+        return self.create_split_sequenced_data(features, grouped_by_labels, labels)
+
+    def get_sequenced_activity_recognition(self):
+        # WARNING
+        # this dataset is HUGE
+        X_train, y_train, sequence_length_train, X_test, y_test, sequence_length_test, features = self.get_activity_recognition()
+        samples = np.concatenate((X_train, X_test))
+        labels = np.concatenate((y_train, y_test))
+        grouped_by_labels = defaultdict(list)
+        for label, sample in zip(labels, samples):
+            grouped_by_labels[label].append(list(sample))
+
+        return self.create_split_sequenced_data(features, grouped_by_labels, labels)
 
     def create_sequences(self, grouped_by_labels, labels):
         # the idea behind this is to make sequenced data out of non sequenced data:
@@ -66,13 +82,27 @@ class LearningSetFactory(object):
         gen = MarkovChainTransitionMatrixGenerator(len(grouped_by_labels))
         # 2.
         matrix = gen.get_transition_probability_matrix()
+        # matrix = np.asarray([[0.7, 0.3], [0.3, 0.7]])
         current_label_index = 0
         sequenced_X = []
         sequenced_Y = []
 
+        # activity dataset is HUGE and if statement or try/except in
+        # the loop body would be too slow
+        def on_dict(grouped_by_labels, next_label):
+            return np.random.choice(grouped_by_labels[next_label])
+
+        def on_list(grouped_by_labels, next_label):
+            index = np.random.randint(0, len(grouped_by_labels[next_label]))
+            return grouped_by_labels[next_label][index]
+        if isinstance(list(grouped_by_labels.values())[0][0], dict):
+            get_next_in_seq = on_dict
+        else:
+            get_next_in_seq = on_list
         # 3.
         # note: dicts are not ordered but chyba wyjebane
         for label, rows in grouped_by_labels.items():
+            print(len(rows))
             for row in rows:
                 sequenced_X.append(row)
                 sequenced_Y.append(label)
@@ -83,7 +113,9 @@ class LearningSetFactory(object):
                 next_label_index = np.random.choice(possible_next_labels_indices, p=probabilities)
                 next_label = labels[next_label_index]
                 # 5.
-                next_in_seq = np.random.choice(grouped_by_labels[next_label])
+                # print(grouped_by_labels.keys())
+                # print(labels)
+                next_in_seq = get_next_in_seq(grouped_by_labels, next_label)
                 # 6.
                 sequenced_X.append(next_in_seq)
                 sequenced_Y.append(next_label)
@@ -127,14 +159,14 @@ class LearningSetFactory(object):
         y_train = sequenced_Y[split_point:]
         return X_test, X_train, y_test, y_train
 
-    def shuffle_sequences(self, sequenced_X, sequenced_Y):
+    def shuffle_sequences(self, sequenced_X, sequenced_Y, seq_len=2):
         seq_length_counter = 0
         to_shuffle = []
         package = []
         for zipped in zip(sequenced_X, sequenced_Y):
             package.append(zipped)
             seq_length_counter += 1
-            if seq_length_counter == self.sequence_length:
+            if seq_length_counter == seq_len:
                 to_shuffle.append(package)
                 seq_length_counter = 0
                 package = []
@@ -190,7 +222,6 @@ class LearningSetFactory(object):
         train = slice(split_point, len(csv_files))
 
         feature_names = ['x acceleration', 'y acceleration', 'z acceleration']
-
         return self.get_data_from_csv_without_header(csv_files[test], skip_columns=1) + \
                self.get_data_from_csv_without_header(csv_files[train], skip_columns=1) + (feature_names,)
 
@@ -203,17 +234,13 @@ class LearningSetFactory(object):
             with open(file, 'r') as csvfile:
                 reader = csv.reader(csvfile)
                 for row in reader:
-                    # if counter > 5:
-                    #     raise
                     *raw_data, label = row
                     raw_data = raw_data[skip_columns:]
-                    # print("data", data)
-                    # print("raw data", raw_data)
-                    # print("labels", labels)
-                    # print("sequence_lengths", sequence_lengths)
                     data.append(raw_data)
                     labels.append(label)
                     counter += 1
+                    if counter > 44500:
+                        break
 
             sequence_lengths.append(counter)
 

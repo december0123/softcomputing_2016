@@ -28,7 +28,6 @@ class MarkovChainTransitionMatrixGenerator:
                 self.matrix[class_, :][self.matrix[class_, :] > 0.] -= (probability_of_transition / (i + 1))
                 self.matrix[class_, :][selected_class] = probability_of_transition
                 tabu.append(selected_class)
-        print("macierz", self.matrix)
 
     def get_transition_probability_matrix(self):
         return np.copy(self.matrix)
