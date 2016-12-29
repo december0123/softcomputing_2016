@@ -102,7 +102,6 @@ class LearningSetFactory(object):
         # 3.
         # note: dicts are not ordered but chyba wyjebane
         for label, rows in grouped_by_labels.items():
-            print(len(rows))
             for row in rows:
                 sequenced_X.append(row)
                 sequenced_Y.append(label)
@@ -113,8 +112,6 @@ class LearningSetFactory(object):
                 next_label_index = np.random.choice(possible_next_labels_indices, p=probabilities)
                 next_label = labels[next_label_index]
                 # 5.
-                # print(grouped_by_labels.keys())
-                # print(labels)
                 next_in_seq = get_next_in_seq(grouped_by_labels, next_label)
                 # 6.
                 sequenced_X.append(next_in_seq)
@@ -239,8 +236,6 @@ class LearningSetFactory(object):
                     data.append(raw_data)
                     labels.append(label)
                     counter += 1
-                    if counter > 44500:
-                        break
 
             sequence_lengths.append(counter)
 
