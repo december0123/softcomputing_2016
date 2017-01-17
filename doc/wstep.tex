@@ -13,8 +13,8 @@
 Inaczej mówiąc, sieć Bayesowska to acykliczny (nie zawierający cykli) graf skierowany, w którym:
 \begin{itemize}
 \item Węzły reprezentują zmienne losowe (np. temperaturę jakiegoś źródła, stan pacjenta, cechę obiektu itp.)
-\item Łuki (skierowane) reprezentują zależnośd typu „zmienna X ma bezpośredni wpływ na zmienna Y”,
-\item Każdy węzeł X ma stowarzyszona z nim tablice prawdopodobieostw warunkowych określających wpływ wywierany na X przez jego poprzedników (rodziców) w grafie.
+\item Łuki (skierowane) reprezentują zależność typu „zmienna X ma bezpośredni wpływ na zmienna Y”,
+\item Każdy węzeł X ma stowarzyszona z nim tablice prawdopodobieństw warunkowych określających wpływ wywierany na X przez jego poprzedników (rodziców) w grafie.
 \item Zmienne reprezentowane przez węzły przyjmują wartości dyskretne.
 \end{itemize}
 
@@ -37,6 +37,8 @@ Na rysunku został przedstawiony przykład nieskomplikowanej sieci Bayesowskiej.
 \end{itemize}
 
 \textbf{Orientacja łuków jest konieczna do określenia zależności nieprzechodnich.} Na przytoczonym przykładzie można zaobserwować, że pomimo faktu przemienności własności zależności orientacja krawędzi wnosi istotną informację o rozkładzie.\newline
+
+\newpage
 
 Sieć Bayesowska pozwala na wyznaczenie rozkładu prawdopodobieństwa zmiennych. Jeżeli przez \(\Pi\)(Xi) oznaczymy zbiór rodziców danego wierzchołka w grafie, to rozkład prawdopodobieństwa zmiennych danej sieci opisuje się równaniem:
 $$ P(X_{1}, X_{2}, ... , X_{n}) = \prod _{i=1}^{n}P(X_{i} | \Pi (X_{i})) $$
@@ -89,10 +91,6 @@ $$ DEP(X_{i}, X_{j}) = \sum_{x_{i}, x_{j}}^{ }  P(x_{i}, x_{j}) log \frac{P(x_{i
 
 Gdzie podobnie jak w warunku małe litery \(x_{i}, x_{j}\) oznaczają wartościowania zmiennych \(X_{i}, X_{j} \)a sumowanie przebiega po wszystkich wartościowaniach w próbie D.
 
-
-
-
-
 \newpage
 \newpage
 
@@ -120,11 +118,19 @@ Jednym z głównych problemów występujących przy budowanie takiego modelu jes
 
 Łańcuchy Markowa najprościej określić można za pomocą jednej z dostępnych definicji. Wszystkie rozważania dotyczyć będą funkcji dyskretnej w czasie.
 
-\begin{figure}[h!]
-	\centering
-	\includegraphics[width=0.80\linewidth]{definicja.PNG}
-	\label{definicja}
-\end{figure}
+\begin{theorem}
+Ciąg zmiennych losowych $(X_{t})$ o wartościach w przeliczalnym zbiorze $S_{X}$ (przestrzeni stanów) nazywamy łańcuchem Markowa wtedy i tylko wtedy, gdy dla każdego $t \in N$ i każdego ciągu $x_{1},x_{1},\dots,x_{t} \in S_{X}$ mamy
+
+\begin{align}
+\nonumber P(X_{t}=x_{t}\,|\,X_{t-1}=x_{t-1},\dots,X_{2}=x_{2},X_{1}=x_{1})=\\=P(X_{t}=x_{t}\,|\,X_{t-1}=x_{t-1})
+\end{align} 
+
+jeśli tylko
+
+\begin{align}
+P(X_{t-1}=x_{t-1},\dots,X_{2}=x_{2},X_{1}=x_{1})>0.
+\end{align}
+\end{theorem}
 
 Warunek w powyższej definicji określa cały charakter łańcuchów Markowa, czyli, że ewolucja procesu zależy tylko i wyłącznie od bieżącego stanu. Zatem na charakter zmiennej $X_t$ w zadanej chwili $t$ ma wpływ wartość procesu w chwili $t - 1$. Taki łańcuch nazywamy łańcuchem Markowa rzędu pierwszego, czyli jego stan zależy tylko od stanu poprzedniego. Istnieją także rzędy \textit{x}, mówiące, że stan zależy od \textit{x}-stanów poprzednich.
 
