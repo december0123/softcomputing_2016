@@ -14,6 +14,7 @@
 \usepackage{float}
 \usepackage{polski, indentfirst}
 \usepackage{enumerate}
+\usepackage{wrapfig}
 \renewcommand{\arraystretch}{1.3} % linespacing for tables
 
 \usepackage{setspace} \onehalfspacing % document line-spacing
@@ -34,23 +35,24 @@
 \else
 \fi
 
+\graphicspath{{img/}}
 
 \begin{document}
 
 	\input{frontpage}
 	\thispagestyle{empty}
 
-	\newpage
-	\tableofcontents
+	%\newpage
+	%\tableofcontents
 
 	\newpage
     \input{wstep}
-    \input{badania}
-    \input{podsumowanie}
+    %\input{badania}
+    %\input{podsumowanie}
     
-    \newpage
-    \bibliographystyle{plabbrv}
-    \nocite{*}
-    \bibliography{bibliografia}
+    %\newpage
+    %\bibliographystyle{plabbrv}
+    %\nocite{*}
+    %\bibliography{bibliografia}
 
 \end{document}
