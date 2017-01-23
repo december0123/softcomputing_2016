@@ -29,7 +29,7 @@ def main():
     # train_and_test_bayes(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.activity_recognition))
     train_and_test_bayes('naive', *learning_factory.get_train_test_data(LearningSetFactory.DataSource.breast_cancer))
     train_and_test_bayes('chow-liu', *learning_factory.get_train_test_data(LearningSetFactory.DataSource.breast_cancer))
-    train_and_test_bayes('tan', *learning_factory.get_train_test_data(LearningSetFactory.DataSource.breast_cancer))
+    # train_and_test_bayes('tan', *learning_factory.get_train_test_data(LearningSetFactory.DataSource.breast_cancer))
     # train_and_test_markov(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.breast_cancer))
     # train_and_test_markov(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.activity_recognition))
     # train_and_test_markov(*learning_factory.get_train_test_data(LearningSetFactory.DataSource.sequenced_breast_cancer))
