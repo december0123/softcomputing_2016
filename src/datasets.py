@@ -10,6 +10,9 @@ from enum import Enum, unique
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction import DictVectorizer
 from src.markov_chain_transition_matrix_generator import MarkovChainTransitionMatrixGenerator
+import weka.core.jvm as jvm
+from weka.core.converters import Loader
+from weka.filters import Filter
 
 
 class LearningSetFactory(object):
@@ -24,6 +27,7 @@ class LearningSetFactory(object):
         activity_recognition = 2
         sequenced_breast_cancer = 3
         sequenced_activity_recognition = 4
+        weka_breast_cancer = 5
 
     def get_train_test_data(self, data_source):
         print("Data source: {}" .format(data_source))
@@ -35,6 +39,8 @@ class LearningSetFactory(object):
             return self.get_sequenced_breast_cancer()
         elif data_source == LearningSetFactory.DataSource.sequenced_activity_recognition:
             return self.get_sequenced_activity_recognition()
+        elif data_source == LearningSetFactory.DataSource.weka_breast_cancer:
+            return self.get_weka_breast_cancer()
         else:
             raise Exception("Invalid data source. Check DataSource enum class.")
 
@@ -175,6 +181,26 @@ class LearningSetFactory(object):
                 sequenced_X.append(zipped_sequence[0])
                 sequenced_Y.append(zipped_sequence[1])
         return sequenced_X, sequenced_Y
+
+    def get_weka_breast_cancer(self):
+        split_ratio = 0.2
+
+        loader = Loader(classname="weka.core.converters.CSVLoader")
+        loader.options = ['-F', ',']
+        dataset = loader.load_file(os.path.join(DATASET_DIR, 'uci-20070111-breast-cancer.csv'))
+        dataset.class_is_last()
+        remove = Filter(classname="weka.filters.unsupervised.instance.RemovePercentage", options=[
+            "-P", str(split_ratio * 100)])
+        remove.inputformat(dataset)
+        train_set = remove.filter(dataset)
+        remove = Filter(classname="weka.filters.unsupervised.instance.RemovePercentage", options=[
+            "-P", str(split_ratio * 100), "-V"])
+        remove.inputformat(dataset)
+        test_set = remove.filter(dataset)
+
+        labels = dataset.class_attribute.values
+
+        return train_set, test_set, labels
 
     def get_breast_cancer(self):
         data = []
