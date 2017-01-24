@@ -41,10 +41,8 @@ class MyBayes(object):
         self.formatted_labels = self.le.fit_transform(y_train)
         self.formatted_labels = self.formatted_labels.reshape(self.formatted_labels.shape[0], 1)
         graph = nx.DiGraph()
-        for i in range(len(self.state_names)):
-            graph.add_node(i, name=self.state_names[i])
         for i in range(1, len(self.state_names)):
-            graph.add_edge(0, i)
+            graph.add_edge((0,), (i,))
         X = np.concatenate((self.formatted_labels, X_train), axis=1)
         self.model = BayesianNetwork.from_samples(X, algorithm='exact', state_names=self.state_names, root=0,
                                                   constraint_graph=graph)
