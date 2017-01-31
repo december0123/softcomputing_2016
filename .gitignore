@@ -95,3 +95,10 @@ doc/*.synctex.gz
 doc/*.aux
 doc/*.dvi
 
+# Other
+.idea/
+__MACOSX
+
+# Project specific
+ARFSCMA.zip
+Activity Recognition from Single Chest-Mounted Accelerometer

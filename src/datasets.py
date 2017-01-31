@@ -10,7 +10,7 @@ from enum import Enum, unique
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction import DictVectorizer
 from src.markov_chain_transition_matrix_generator import MarkovChainTransitionMatrixGenerator
-import weka.core.jvm as jvm
+#import weka.core.jvm as jvm
 from weka.core.converters import Loader
 from weka.filters import Filter
 
@@ -30,7 +30,7 @@ class LearningSetFactory(object):
         weka_breast_cancer = 5
 
     def get_train_test_data(self, data_source):
-        print("Data source: {}" .format(data_source))
+        #print("Data source: {}" .format(data_source))
         if data_source == LearningSetFactory.DataSource.breast_cancer:
             data, target, feature_names = self.get_breast_cancer()
         elif data_source == LearningSetFactory.DataSource.activity_recognition:
