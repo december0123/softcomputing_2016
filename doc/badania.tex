@@ -3,6 +3,279 @@
 \section{Opis przeprowadzonych badań}
 
 \subsection{Sieci Bayesowskie}
+Badania przeprowadzone na zaimplementowanych sieciach bayesowskich miały za zadanie określenie różnic w działaniu modelu wynikających z zastosowania różnych algorytmów konstruowania sieci.\newline
+Algorytmami wybranymi do przeprowadzenia badań były:
+\begin{enumerate}
+\item Algorytm naiwny
+\item Algorytm Chow–Liu
+\item Algorytm ,,Hill Climber''
+\item Algorytm symulowanego wyżarzania
+\item Algorytm ,,LAGD Hill Climber''
+\end{enumerate}
+Przeprowadzenie badań zostało rozpoczęte od utworzenia sieci bayesowskich korzystających z wymienionych powyżej algorytmów w do utworzenia struktury grafu.\newline
+Następnie utworzone sieci bayesowskie poddano uczeniu za pomocą fragmentu zbioru danych dotyczącego występowania nawrotu choroby nowotworowej piersi pochodzącego z repozytorium \textit{UCI}\footnote{Link do zbioru: \url{https://archive.ics.uci.edu/ml/datasets/Breast+Cancer}}. Wspomniany zbiór składa się z zestawu dziewięciu cech opisywanych wartościami dyskretnymi oraz dwóch klas.\newline
+Przed rozpoczęciem procesu uczenia atrybuty zbioru uczącego zostały przekonwertowane na format ,,One Hot Encoding'' (OHE). \newline
+Po zakończeniu procesu uczenia na wejście modeli został podany fragment zbioru danych rozłączny ze zbiorem wykorzystanym do uczenia. Na podstawie danych otrzymanych w wyniku predykcji dokonywanych przez modele obliczony został ich błąd klasyfikacji. Co więcej, dla każdego algorytmu generowania sieci sporządzono macierz błędów (tablicę pomyłek).  \newline
+Na podstawie opracowanej macierzy błędów wyznaczone zostały miary jakości modeli:
+\begin{itemize}
+\item prawdziwie pozytywna (ang. true positive TP)
+\item prawdziwie negatywna (ang. true negative TN)
+\item fałszywie pozytywna (ang. false positive FP), błąd I typu
+\item fałszywie negatywna (ang. false negative FN), błąd II typu
+\item czułość (ang. sensitivity) - odsetek prawdziwie pozytywnych (ang. true positive rate TPR)
+\item specyficzność (ang. specificity SPC) - odsetek prawdziwie negatywnych (ang. True Negative Rate TNR)
+\item precyzja (ang. precision)
+\item dokładność (ang. accuracy ACC)
+\end{itemize}
+\vspace{5mm}
+\textbf{\textit{Czułość}}  interpretuje się jako zdolność modelu do prawidłowego rozpoznania nawrotu choroby tam, gdzie on występuje i została obliczone zgodnie ze wzorem:
+$$ TPR = TP/(TP+FN) $$
+Gdzie:\\
+TPR - czułość\\
+TP -  prawdziwie pozytywna\\
+FN - fałszywie negatywna\\
+Czułość 100\% oznaczałaby, że wszystkie osoby z nawrotem choroby zostaną wyznaczone przez model.\\
+\vspace{5mm}
+\textbf{\textit{Specyficzność}} wyznaczono na podstawie równania:
+$$ TNR = TN/(FP+TN) $$
+Gdzie:\\
+TNR - specyficzność \\
+TN - prawdziwie negatywna\\
+FP - fałszywie pozytywna\\
+Specyficzność 100\% oznaczałaby, że wszyscy ludzie zdrowi w wykonanym teście  zostaną oznaczeni przez model jako zdrowi.\\
+
+\textbf{\textit{Precyzja}} jest określona wzorem:
+$$ PRE = TP/(TP+FP) $$
+Gdzie:\\
+PRE - precyzja\\
+TP -  prawdziwie pozytywna\\
+FP -  fałszywie pozytywna\\
+
+\textbf{\textit{Dokładność}} obliczono korzystając z równania:
+$$ ACC = (TP+TN)/(P+N) $$
+Gdzie:\\
+ACC -  dokładność\\
+TP -  prawdziwie pozytywna\\
+TN -  prawdziwie negatywna\\
+P -  wartości wyznaczone poprawnie\\
+N -  wartości wyznaczone błędnie\\
+
+Dodatkowo wygenerowane zostały grafy przedstawiające strukturę sieci bayesowskiej analizowanych modeli, dzięki czemu możliwe było bardziej szczegółowe przeanalizowanie wyników.
+
+Na koniec wykonane zostały także symulacje działania klasyfikatorów:
+\begin{itemize}
+\item Sieci neuronowej z wsteczną propagacją błędów
+\item Sieci neuronowej typu ELM
+\item Support Vector Machine
+\end{itemize}
+na tym samym zbiorze danych. Dzięki temu możliwe było odniesienie otrzymanych przez sieci bayesowskie wyników do rezultatów osiąganych przez inne rodzaje klasyfikatorów.
+\newpage
+
+
+\subsubsection{Sieć bayesowska otrzymana za pomocą algortymu ,,Hill Climber''}
+
+\begin{table}[H]
+\centering
+\caption{Macierz błędu sieci bayesowskiej otrzymanej za pomocą algortymu ,,Hill Climber''}
+\label{my-label}
+\begin{tabular}{
+>{\columncolor[HTML]{FFFFFF}}c 
+>{\columncolor[HTML]{FFFFFF}}c |c|c|}
+\cline{3-4}
+\multicolumn{2}{c}{\cellcolor[HTML]{FFFFFF}}                                                                          & \multicolumn{2}{c|}{\cellcolor[HTML]{9B9B9B}Klasa przewidywana}                                                     \\ \cline{3-4} 
+\multicolumn{2}{c}{\multirow{-2}{*}{\cellcolor[HTML]{FFFFFF}}}                                                        & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} pozytywna} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} negatywna} \\ \hline
+\multicolumn{1}{|c|}{\cellcolor[HTML]{9B9B9B}}                                    & \cellcolor[HTML]{C0C0C0}pozytywna & 4                                                        & 17                                                        \\ \cline{2-4} 
+\multicolumn{1}{|c|}{\multirow{-2}{*}{\cellcolor[HTML]{9B9B9B}Klasa rzeczywista}} & \cellcolor[HTML]{C0C0C0}negatywna & 9                                                        & 28                                                        \\ \hline
+\end{tabular}
+\end{table}
+\textbf{Miary jakości otrzymanych wyników:\\}
+Poprawnie zaklasyfikowane:	32\\
+Błędnie zaklasyfikowane:	26\\
+Czułość:	30,77\%\\
+Specyficzność:	62,22\%\\
+Precyzja:	19,05\%\\
+Dokładność:	55,17\%\\
+Błąd:	44,83\%\\
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.70\linewidth]{hill-climber.png}
+	\label{hc}
+	\caption{Graf sieci bayesowskiej otrzymanej za pomocą algortymu ,,Hill Climber''}
+\end{figure}
+
+Algorytm Hill Climber charakteryzuje się umiejętnością znajdowania ekstremów lokalnych. Niestety podczas procesu optymalizacji ma tendencję do znajdowania przeciętnych rozwiązań , które wydają się obiecujące jedynie lokalnie. Prawdopodobnie właśnie dlatego otrzymane przez algorytm Hill Climber rozwiązanie charakteryzuje się niską dokładnością (55\% przy problemie dwuklasowym).\\abstractname{}  Warto zwrócić także uwagę na niską wartość precyzji oraz czułości. Istotną obserwacją jest fakt, że model znacznie częściej wybierał klasę negatywną, co prowadziło do zawyżenia wartości specyficzności i obniżenia czułości. \\
+Wybór klasy negatywnej może wynikać ze zbytniego dopasowania się do zbioru uczącego, w wyniku czego prawdopodobieństwo przynależności do klasy pozytywnej wyliczane dla obiektów ze zbioru testowego było stosunkowo niskie.\\
+Warto zauważyć, że algorytm bardzo dobrze poradził sobie ze znalezieniem prawidłowości występujących pomiędzy wiekiem pacjentki, a wiekiem wystąpienia u niej menopauzy oraz zależności pomiędzy piersią dotkniętą nowotworem, a kwartylem piersi (w zbiorze wystąpiła duplikacja informacji). Algorytmowi nie udało się zbudować więcej niż dwóch poziomów zależności przyczynowo skutkowych, co może być jedyną z przyczyn jego słabych wyników.
+
+\subsubsection{Sieć bayesowska otrzymana za pomocą algorytmu symulowanego wyżarzania}
+
+\begin{table}[H]
+\centering
+\caption{Macierz błędu sieci bayesowskiej otrzymanej za pomocą algorytmu symulowanego wyżarzania}
+\label{my-label}
+\begin{tabular}{
+>{\columncolor[HTML]{FFFFFF}}c 
+>{\columncolor[HTML]{FFFFFF}}c |c|c|}
+\cline{3-4}
+\multicolumn{2}{c}{\cellcolor[HTML]{FFFFFF}}                                                                          & \multicolumn{2}{c|}{\cellcolor[HTML]{9B9B9B}Klasa przewidywana}                                                     \\ \cline{3-4} 
+\multicolumn{2}{c}{\multirow{-2}{*}{\cellcolor[HTML]{FFFFFF}}}                                                        & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} pozytywna} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} negatywna} \\ \hline
+\multicolumn{1}{|c|}{\cellcolor[HTML]{9B9B9B}}                                    & \cellcolor[HTML]{C0C0C0}pozytywna & 3                                                        & 18                                                        \\ \cline{2-4} 
+\multicolumn{1}{|c|}{\multirow{-2}{*}{\cellcolor[HTML]{9B9B9B}Klasa rzeczywista}} & \cellcolor[HTML]{C0C0C0}negatywna & 7                                                        & 30                                                        \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Miary jakości otrzymanych wyników:\\}
+Poprawnie zaklasyfikowane:	33\\
+Błędnie zaklasyfikowane:	25\\
+Czułość:	30,00\%\\
+Specyficzność:	62,50\%\\
+Precyzja:	14,29\%\\
+Dokładność:	56,90\%\\
+Błąd:	43,10\%\\
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.70\linewidth]{simulated-annealing.png}
+	\label{sa}
+	\caption{Graf sieci bayesowskiej otrzymanej za pomocą algorytmu symulowanego wyżarzania}
+\end{figure}
+
+Algorytm symulowanego wyżarzania eliminuje podstawową wadę algorytmu Hill Climber - tendencję do utykania w ekstremum lokalnym. Algorytm poprzez wykonywanie skoków w losowe miejsca (prawdopodobieństwo określone rozkładem) w kolejnych iteracjach algorytmu. Zastosowanie bardziej skomplikowanej heurystyki zaowocowało uzyskaniem wyższej o około 1.73\% dokładności modelu.\\abstractname{}  Lekkiemu obniżeniu uległa precyzja, a pozostałe metryki pozostały na zbliżonym poziomie.  Graf skonstruowany przez algorytm symulowanego wyżarzania charakteryzuje się znacznie większą liczbą znalezionych zależności przyczynowo-skutkowych niż w przypadku poprzedniego algorytmu. \\
+Dodatkowo graf zawiera znacznie mniej liści, co może sugerować, że niektóre zależności  mogą być nieprawidłowe - zgodnie z grafem dwa stany są pośrednio lub bezpośrednio zależne od pięciu innych. Być może ta właściwość grafu doprowadziła do niskiej skuteczności klasyfikatora. 
+
+\subsubsection{Sieć bayesowska otrzymana za pomocą algortymu ,,LAGD Hill Climber''}
+
+\begin{table}[H]
+\centering
+\caption{Macierz błędu sieci bayesowskiej otrzymanej za pomocą algorytmu ,,LAGD Hill Climber''}
+\label{my-label}
+\begin{tabular}{
+>{\columncolor[HTML]{FFFFFF}}c 
+>{\columncolor[HTML]{FFFFFF}}c |c|c|}
+\cline{3-4}
+\multicolumn{2}{c}{\cellcolor[HTML]{FFFFFF}}                                                                          & \multicolumn{2}{c|}{\cellcolor[HTML]{9B9B9B}Klasa przewidywana}                                                     \\ \cline{3-4} 
+\multicolumn{2}{c}{\multirow{-2}{*}{\cellcolor[HTML]{FFFFFF}}}                                                        & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} pozytywna} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} negatywna} \\ \hline
+\multicolumn{1}{|c|}{\cellcolor[HTML]{9B9B9B}}                                    & \cellcolor[HTML]{C0C0C0}pozytywna & 3                                                        & 18                                                        \\ \cline{2-4} 
+\multicolumn{1}{|c|}{\multirow{-2}{*}{\cellcolor[HTML]{9B9B9B}Klasa rzeczywista}} & \cellcolor[HTML]{C0C0C0}negatywna & 3                                                        & 34                                                        \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Miary jakości otrzymanych wyników:\\}
+Poprawnie zaklasyfikowane:	37\\
+Błędnie zaklasyfikowane:	21\\
+Czułość:	50,00\%\\
+Specyficzność:	65,38\%\\
+Precyzja:	14,29\%\\
+Dokładność:	63,79\%\\
+Błąd:	36,21\%\\
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.55\linewidth]{lagd-hill-climber.png}
+	\label{lagdhc}
+	\caption{Graf sieci bayesowskiej otrzymanej za pomocą algorytmu ,,LAGD Hill Climber''}
+\end{figure}
+
+Algorytm LAGD Hill Climber stanowi rozszerzenie algorytmu Hill Climber polegające na analizie dodatkowo kilku kroków algorytmu wprzód w celu odnalezienia najlepszej struktury grafu. Dzięki zastosowaniu wspomnianego usprawnienia udało się otrzymać dokładność klasyfikacji wyższą o około 8,5\%, co stanowi świetny rezultat. \\
+Powstały graf ma podobną strukturę do grafu powstałego w efekcie działania Hill Climber. Zmianie uległo największe drzewo grafu, a pozostałe dwa mniejsze pozostały bez zmian.  \\
+Nowa struktura największego drzewa posiada dwukrotnie mniej liści, co sugeruje, że  udało się odszukać głębsze zależności między stanami. Otrzymany graf stanowi formę pośrednią pomiędzy poprzednimi dwoma strukturami. \\
+Otrzymany model w porównaniu do poprzedników charakteryzuje się wysoką czułością, ponieważ  lepiej radzi sobie z prawidłowym rozpoznaniem nawrotu choroby.
+
+
+\subsubsection{Sieć bayesowska otrzymana za pomocą algorytmu naiwnego}
+\begin{table}[H]
+\centering
+\caption{Macierz błędu sieci bayesowskiej otrzymanej za pomocą algorytmu naiwnego}
+\label{my-label}
+\begin{tabular}{
+>{\columncolor[HTML]{FFFFFF}}c 
+>{\columncolor[HTML]{FFFFFF}}c |c|c|}
+\cline{3-4}
+\multicolumn{2}{c}{\cellcolor[HTML]{FFFFFF}}                                                                          & \multicolumn{2}{c|}{\cellcolor[HTML]{9B9B9B}Klasa przewidywana}                                                     \\ \cline{3-4} 
+\multicolumn{2}{c}{\multirow{-2}{*}{\cellcolor[HTML]{FFFFFF}}}                                                        & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} pozytywna} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} negatywna} \\ \hline
+\multicolumn{1}{|c|}{\cellcolor[HTML]{9B9B9B}}                                    & \cellcolor[HTML]{C0C0C0}pozytywna & 0                                                        & 18                                                        \\ \cline{2-4} 
+\multicolumn{1}{|c|}{\multirow{-2}{*}{\cellcolor[HTML]{9B9B9B}Klasa rzeczywista}} & \cellcolor[HTML]{C0C0C0}negatywna & 0                                                        & 40                                                        \\ \hline
+\end{tabular}
+\end{table}
+\textbf{Miary jakości otrzymanych wyników:\\}
+Poprawnie zaklasyfikowane:	40\\
+Błędnie zaklasyfikowane:	18\\
+Czułość:	niemożliwa do wyznaczenia\\
+Specyficzność:	68,97\%\\
+Precyzja:	0,00\%\\
+Dokładność:	68,97\%\\
+Błąd:	31,03\%\\
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.80\linewidth]{naive3.png}
+	\label{hc}
+	\caption{Graf sieci bayesowskiej otrzymanej za pomocą algorytmu naiwnego}
+\end{figure}
+
+Sieć bayesowska skonstruowana za pomocą algorytmu naiwnego składa się  drzewa (korzeń i liście). Ze względu na to, że algorytmowi naiwnemu nie udało się odszukać zbyt wielu zależności przyczynowo skutkowych w zbiorze model posiada znikomą wartość jako klasyfikator. \\
+W ramach testów przeprowadzonym na zbiorze testowym wszystkie otrzymane odpowiedzi były takie same - 'no-reccurence-events'. W związku z tym precyzja modelu wyniosła 0\%. Wysoka w porównaniu z poprzedniki algorytmami skuteczności jest jedynie dziełem przypadku i wynika z proporcji klas w zbiorze testowym. Wnioskiem z przeprowadzonego eksperymentu jest fakt, że algorytm naiwny może okazać się zbyt prosty aby odpowiednio odwzorować zależności występujące w zbiorze w postaci grafu.
+
+\subsubsection{Sieć bayesowska otrzymana za pomocą algortymu Chow-Liu}
+\begin{table}[H]
+\centering
+\caption{Macierz błędu sieci bayesowskiej otrzymanej za pomocą algortymu Chow-Liu}
+\label{my-label}
+\begin{tabular}{
+>{\columncolor[HTML]{FFFFFF}}c 
+>{\columncolor[HTML]{FFFFFF}}c |c|c|}
+\cline{3-4}
+\multicolumn{2}{c}{\cellcolor[HTML]{FFFFFF}}                                                                          & \multicolumn{2}{c|}{\cellcolor[HTML]{9B9B9B}Klasa przewidywana}                                                     \\ \cline{3-4} 
+\multicolumn{2}{c}{\multirow{-2}{*}{\cellcolor[HTML]{FFFFFF}}}                                                        & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} pozytywna} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} negatywna} \\ \hline
+\multicolumn{1}{|c|}{\cellcolor[HTML]{9B9B9B}}                                    & \cellcolor[HTML]{C0C0C0}pozytywna & 0                                                        & 15                                                        \\ \cline{2-4} 
+\multicolumn{1}{|c|}{\multirow{-2}{*}{\cellcolor[HTML]{9B9B9B}Klasa rzeczywista}} & \cellcolor[HTML]{C0C0C0}negatywna & 1                                                        & 42                                                        \\ \hline
+\end{tabular}
+\end{table}
+\textbf{Miary jakości otrzymanych wyników:\\}
+Poprawnie zaklasyfikowane:	42\\
+Błędnie zaklasyfikowane:	16\\
+Czułość:	0,00\%\\
+Specyficzność:	73,68\%\\
+Precyzja:	0,00\%\\
+Dokładność:	72,41\%\\
+Błąd:	27,59\%\\
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.97\linewidth]{chow-liu.png}
+	\label{hc}
+	\caption{Graf sieci bayesowskiej otrzymanej za pomocą algortymu Chow-Liu}
+\end{figure}
+
+Cechą algorytmu Chow-Liu jest fakt, że produkuje on niezorientowane drzewo zależności. Jeżeli sieć Bayesa danego rozkładu ma postać drzewa, to algorytm Chow-Liu poprawnie odtworzy jego kształt. Algorytm Chow-Liu nie sprawdza, czy rozkład zmiennych zadanej próby spełnia powyższy warunek. \\
+Jeśli struktura zależności między zmiennymi w próbie nie jest drzewem, to algorytm znajduje najlepszą strukturę drzewiastą, która opisuje postać zależności. Należy pamiętać, że w  niekorzystnych wypadkach informacja zwrócona przez algorytm może być błędna. \\
+Tak właśnie stało się w przypadku  analizowanego przez nas zbioru danych. Już po samej strukturze grafu widać, że znalezione przez algorytm zależności przyczynowo-skutkowe są niepoprawne. Przykładem niepoprawnej zależności może być  występowanie 6-8 ognisk nowotworu w przypadku występowania 0-2 ognisk nowotworu (wystąpienie tych sytuacji wzajemnie się wyklucza). \\
+W efekcie otrzymany model nie nadaje się do wykorzystania w celach diagnostycznych, a wartości parametrów czułości i precyzji wynoszą 0\% pomimo wysokiej dokładności (72\%). Podobnie jak w przypadku algorytmu naiwnego, dokładność odwzorowała jedynie przybliżenie rozkładu klas w zbiorze uczącym.
+
+
+\begin{table}[H]
+\centering
+\caption{Zestawienie dokładności klasyfikacji otrzymanej przez wszystkie modele uczestniczące w przeprowadzonym eksperymencie}
+\label{last}
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+{\color[HTML]{333333} Model}            & {\color[HTML]{333333} Dokładność klasyfikacji} \\ \hline
+Sieć bayesowska (algorytm naiwny)       & 68.97\%                                        \\ \hline
+Sieć bayesowska (Chow–Liu)              & 72.41\%                                        \\ \hline
+Sieć bayesowska (,,Hill Climber”)       & 55,17\%                                        \\ \hline
+Sieć bayesowska (symulowane wyżarzanie) & 56,90\%                                        \\ \hline
+Sieć bayesowska (,„LAGD Hill Climber”)  & 63,79\%                                        \\ \hline
+Sieć neuronowa z wsteczną propagacją    & 71,08\%                                        \\ \hline
+Sieć neuronowa typu ELM                 & 69,97\%                                        \\ \hline
+Support Vector Machine                  & 73,11\%                                        \\ \hline
+\end{tabular}
+\end{table}
+
+Eksperymenty przeprowadzone na zestawie ośmiu modeli pokazują, że efekty uzyskane przez sieci bayesowskie są wyraźnie gorsze od bardziej skomplikowanych modeli. Wyniki uzyskane przez algorytm naiwny oraz Chow-Liu  zostały zignorowane ze względu na bardzo niskie miary jakości tych modeli. Spośród sieci bayesowskich najlepiej poradził sobie algorytm LAGD Hill Climber. Dzięki przewidywaniu na kilka kroków wprzód, która stryktura grafu może okazać się skuteczniejsza udało mu się poprawić wyniki klasycznego algorytmu Hill Climber o ponad 8\% c stanowi znaczącą różnicę. Algorytm symulowanego wyżarzania osiągnął poziom podobny do klasycznego algorytmu Hill Climber pokonując go o około 1,7\%. Sieć typu ELM ze względu na swoją uproszczoną strukturę uplasowała się poniżej sieci neuronowej ze wsteczną propagacją (jednak udało się jej uzyskać znacznie lepsze czasu uczenia).  Najlepszym klasyfikatorem okazał się SVM, któremu udało się osiągnąć rezultat lepszy o 10\% niż LAGD Hill Climber oraz około 18\% lepszy od pozostałych sieci bayesowskich.  
+
+\newpage
 
 \subsection{Ukryte modele Markowa}
 
